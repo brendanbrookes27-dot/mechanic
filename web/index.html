@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mechanic iTablet & Odometer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Odometer HUD -->
+    <div id="odometer-hud" class="odometer-container hidden">
+        <div class="odometer-icon"><i class="fa-solid fa-gauge-high"></i></div>
+        <div class="odometer-value"><span id="odo-val">0.0</span> <span class="unit" id="odo-unit">MI</span></div>
+    </div>
+
+    <!-- iOS Tablet Container -->
+    <div id="tablet-container" class="tablet-wrapper hidden">
+        <div class="ipad-frame">
+            <!-- iOS Status Bar -->
+            <div class="ios-status-bar">
+                <span class="time" id="ios-time">09:41</span>
+                <div class="notch"></div>
+                <div class="status-icons">
+                    <i class="fa-solid fa-signal"></i>
+                    <i class="fa-solid fa-wifi"></i>
+                    <i class="fa-solid fa-battery-full"></i>
+                </div>
+            </div>
+
+            <!-- Home Screen / App Screen Container -->
+            <div class="ios-screen">
+                <!-- HomeScreen Grid -->
+                <div id="home-screen" class="app-grid">
+                    <div class="app-icon" data-app="diagnostics">
+                        <div class="icon-box diag-icon"><i class="fa-solid fa-car-battery"></i></div>
+                        <span>Diagnostics</span>
+                    </div>
+                    <div class="app-icon" data-app="tuning">
+                        <div class="icon-box tuning-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                        <span>LS Customs</span>
+                    </div>
+                    <div class="app-icon" data-app="invoicing">
+                        <div class="icon-box invoice-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                        <span>Invoicing</span>
+                    </div>
+                    <div class="app-icon" data-app="parts">
+                        <div class="icon-box parts-icon"><i class="fa-solid fa-boxes-packing"></i></div>
+                        <span>Parts Shop</span>
+                    </div>
+                    <div class="app-icon" data-app="roster">
+                        <div class="icon-box roster-icon"><i class="fa-solid fa-users-gear"></i></div>
+                        <span>Employees</span>
+                    </div>
+                    <div class="app-icon" data-app="service_logs">
+                        <div class="icon-box logs-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                        <span>Logs</span>
+                    </div>
+                </div>
+
+                <!-- Diagnostics App -->
+                <div id="app-diagnostics" class="app-view hidden">
+                    <div class="app-header">
+                        <button class="back-btn"><i class="fa-solid fa-chevron-left"></i> Home</button>
+                        <h2>Vehicle Diagnostics</h2>
+                    </div>
+                    <div class="app-content">
+                        <div class="vehicle-info-card">
+                            <h3>Vehicle Plate: <span id="diag-plate">N/A</span></h3>
+                            <p>Odometer: <span id="diag-mileage">0.0</span> mi</p>
+                        </div>
+                        <div class="parts-health-grid">
+                            <div class="part-item">
+                                <span>Engine Oil</span>
+                                <div class="progress-bar"><div id="bar-oil" class="fill" style="width: 100%;"></div></div>
+                                <span id="val-oil" class="part-val">100%</span>
+                                <button class="repair-btn" data-part="oil">Service</button>
+                            </div>
+                            <div class="part-item">
+                                <span>Spark Plugs</span>
+                                <div class="progress-bar"><div id="bar-spark_plugs" class="fill" style="width: 100%;"></div></div>
+                                <span id="val-spark_plugs" class="part-val">100%</span>
+                                <button class="repair-btn" data-part="spark_plugs">Service</button>
+                            </div>
+                            <div class="part-item">
+                                <span>Clutch</span>
+                                <div class="progress-bar"><div id="bar-clutch" class="fill" style="width: 100%;"></div></div>
+                                <span id="val-clutch" class="part-val">100%</span>
+                                <button class="repair-btn" data-part="clutch">Service</button>
+                            </div>
+                            <div class="part-item">
+                                <span>Suspension</span>
+                                <div class="progress-bar"><div id="bar-suspension" class="fill" style="width: 100%;"></div></div>
+                                <span id="val-suspension" class="part-val">100%</span>
+                                <button class="repair-btn" data-part="suspension">Service</button>
+                            </div>
+                            <div class="part-item">
+                                <span>Brakes</span>
+                                <div class="progress-bar"><div id="bar-brakes" class="fill" style="width: 100%;"></div></div>
+                                <span id="val-brakes" class="part-val">100%</span>
+                                <button class="repair-btn" data-part="brakes">Service</button>
+                            </div>
+                            <div class="part-item">
+                                <span>Tires</span>
+                                <div class="progress-bar"><div id="bar-tires" class="fill" style="width: 100%;"></div></div>
+                                <span id="val-tires" class="part-val">100%</span>
+                                <button class="repair-btn" data-part="tires">Service</button>
+                            </div>
+                            <div class="part-item">
+                                <span>Fuel Filter</span>
+                                <div class="progress-bar"><div id="bar-fuel_filter" class="fill" style="width: 100%;"></div></div>
+                                <span id="val-fuel_filter" class="part-val">100%</span>
+                                <button class="repair-btn" data-part="fuel_filter">Service</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LS Customs App -->
+                <div id="app-tuning" class="app-view hidden">
+                    <div class="app-header">
+                        <button class="back-btn"><i class="fa-solid fa-chevron-left"></i> Home</button>
+                        <h2>LS Customs Tuning</h2>
+                    </div>
+                    <div class="app-content">
+                        <div class="tuning-menu">
+                            <div class="tune-item">Engine Upgrade Level 1 ($1500) <button class="buy-mod-btn" data-category="engine" data-mod="0" data-cost="1500">Apply</button></div>
+                            <div class="tune-item">Engine Upgrade Level 2 ($3000) <button class="buy-mod-btn" data-category="engine" data-mod="1" data-cost="3000">Apply</button></div>
+                            <div class="tune-item">Brakes Upgrade Level 1 ($1000) <button class="buy-mod-btn" data-category="brakes" data-mod="0" data-cost="1000">Apply</button></div>
+                            <div class="tune-item">Transmission Level 1 ($1200) <button class="buy-mod-btn" data-category="transmission" data-mod="0" data-cost="1200">Apply</button></div>
+                            <div class="tune-item">Suspension Level 1 ($1000) <button class="buy-mod-btn" data-category="suspension" data-mod="0" data-cost="1000">Apply</button></div>
+                            <div class="tune-item">Turbo Tuning ($3000) <button class="buy-mod-btn" data-category="turbo" data-mod="true" data-cost="3000">Apply</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoicing App -->
+                <div id="app-invoicing" class="app-view hidden">
+                    <div class="app-header">
+                        <button class="back-btn"><i class="fa-solid fa-chevron-left"></i> Home</button>
+                        <h2>Create Invoice</h2>
+                    </div>
+                    <div class="app-content form-container">
+                        <input type="number" id="invoice-target" placeholder="Player ID">
+                        <input type="number" id="invoice-amount" placeholder="Amount ($)">
+                        <input type="text" id="invoice-reason" placeholder="Service / Repair Reason">
+                        <button id="send-invoice-btn" class="ios-btn">Send Invoice</button>
+                    </div>
+                </div>
+
+                <!-- Parts Shop App -->
+                <div id="app-parts" class="app-view hidden">
+                    <div class="app-header">
+                        <button class="back-btn"><i class="fa-solid fa-chevron-left"></i> Home</button>
+                        <h2>Order Mechanic Parts</h2>
+                    </div>
+                    <div class="app-content parts-shop">
+                        <div class="shop-item">
+                            <span>Engine Oil Drum</span>
+                            <span>$150</span>
+                            <button class="buy-part-item" data-item="engine_oil" data-cost="150">Order</button>
+                        </div>
+                        <div class="shop-item">
+                            <span>Brake Pads Set</span>
+                            <span>$200</span>
+                            <button class="buy-part-item" data-item="brake_pads" data-cost="200">Order</button>
+                        </div>
+                        <div class="shop-item">
+                            <span>Performance Tires Set</span>
+                            <span>$300</span>
+                            <button class="buy-part-item" data-item="mechanic_tires" data-cost="300">Order</button>
+                        </div>
+                        <div class="shop-item">
+                            <span>Wire Cutters</span>
+                            <span>$50</span>
+                            <button class="buy-part-item" data-item="wire_cutters" data-cost="50">Order</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employee Roster & Service Logs -->
+                <div id="app-roster" class="app-view hidden">
+                    <div class="app-header">
+                        <button class="back-btn"><i class="fa-solid fa-chevron-left"></i> Home</button>
+                        <h2>Mechanic Roster</h2>
+                    </div>
+                    <div class="app-content">
+                        <p class="placeholder-text"><i class="fa-solid fa-user-check"></i> Active Mechanics On Duty</p>
+                    </div>
+                </div>
+
+                <div id="app-service_logs" class="app-view hidden">
+                    <div class="app-header">
+                        <button class="back-btn"><i class="fa-solid fa-chevron-left"></i> Home</button>
+                        <h2>Service Records</h2>
+                    </div>
+                    <div class="app-content">
+                        <p class="placeholder-text"><i class="fa-solid fa-file-lines"></i> Service Records Active</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- iOS Home Bar Indicator -->
+            <div class="ios-home-bar" id="close-tablet-btn"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS `vehicle_mechanic_data` (
+    `plate` VARCHAR(15) NOT NULL,
+    `mileage` DOUBLE NOT NULL DEFAULT 0.0,
+    `oil` FLOAT NOT NULL DEFAULT 100.0,
+    `spark_plugs` FLOAT NOT NULL DEFAULT 100.0,
+    `clutch` FLOAT NOT NULL DEFAULT 100.0,
+    `suspension` FLOAT NOT NULL DEFAULT 100.0,
+    `brakes` FLOAT NOT NULL DEFAULT 100.0,
+    `tires` FLOAT NOT NULL DEFAULT 100.0,
+    `fuel_filter` FLOAT NOT NULL DEFAULT 100.0,
+    `fuel_cut` TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (`plate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `mechanic_service_logs` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `plate` VARCHAR(15) NOT NULL,
+    `mechanic_name` VARCHAR(100) NOT NULL,
+    `service_type` VARCHAR(100) NOT NULL,
+    `cost` INT NOT NULL,
+    `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
