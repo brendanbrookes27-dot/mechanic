@@ -1,3 +1,5 @@
+let isConnectedToVehicle = false;
+
 window.addEventListener('message', function(event) {
     const data = event.data;
 
@@ -15,13 +17,35 @@ window.addEventListener('message', function(event) {
     if (data.action === "openTablet") {
         document.getElementById('tablet-container').classList.remove('hidden');
         if (data.vehicleData) {
-            populateDiagnostics(data.vehicleData);
+            populateDiagnostics(data.vehicleData, data.vehicleModel);
         }
     }
 
     if (data.action === "closeTablet") {
         document.getElementById('tablet-container').classList.add('hidden');
+        resetConnectionState();
     }
+
+    if (data.action === "obdConnected") {
+        isConnectedToVehicle = true;
+        document.getElementById('connection-status').innerText = "Connected (OBD-II)";
+        document.getElementById('connection-status').style.color = "#10b981";
+        document.getElementById('connect-obd-btn').classList.add('hidden');
+        document.getElementById('parts-health-container').classList.remove('hidden');
+    }
+});
+
+function resetConnectionState() {
+    isConnectedToVehicle = false;
+    document.getElementById('connection-status').innerText = "Disconnected";
+    document.getElementById('connection-status').style.color = "#ef4444";
+    document.getElementById('connect-obd-btn').classList.remove('hidden');
+    document.getElementById('parts-health-container').classList.add('hidden');
+}
+
+// Connect OBD Diagnostic Tool Button Click
+document.getElementById('connect-obd-btn').addEventListener('click', function() {
+    fetch(`https://${GetParentResourceName()}/connectOBD`, { method: 'POST' });
 });
 
 // App Navigation
@@ -46,8 +70,9 @@ document.getElementById('close-tablet-btn').addEventListener('click', function()
 });
 
 // Populate Diagnostics Data
-function populateDiagnostics(data) {
+function populateDiagnostics(data, vehicleModel) {
     document.getElementById('diag-plate').innerText = data.plate || 'N/A';
+    document.getElementById('diag-model').innerText = vehicleModel || 'Vehicle';
     document.getElementById('diag-mileage').innerText = (data.mileage || 0.0).toFixed(1);
 
     const parts = ['oil', 'spark_plugs', 'clutch', 'suspension', 'brakes', 'tires', 'fuel_filter'];
@@ -66,6 +91,7 @@ function populateDiagnostics(data) {
 // Repair Buttons
 document.querySelectorAll('.repair-btn').forEach(btn => {
     btn.addEventListener('click', function() {
+        if (!isConnectedToVehicle) return;
         const part = this.getAttribute('data-part');
         const plate = document.getElementById('diag-plate').innerText;
         fetch(`https://${GetParentResourceName()}/repairPart`, {

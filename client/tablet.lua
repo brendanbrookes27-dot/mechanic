@@ -8,15 +8,26 @@ local function OpenTablet()
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
     local plate = nil
+    local modelName = "Vehicle"
 
     if veh and veh ~= 0 then
         plate = GetVehicleNumberPlateText(veh)
+        local hash = GetEntityModel(veh)
+        modelName = GetLabelText(GetDisplayNameFromVehicleModel(hash))
+        if modelName == "NULL" then
+            modelName = GetDisplayNameFromVehicleModel(hash)
+        end
     else
         -- Get closest vehicle if outside vehicle
         local coords = GetEntityCoords(ped)
         local closeVeh = lib.getClosestVehicle(coords, 5.0, false)
         if closeVeh and closeVeh ~= 0 then
             plate = GetVehicleNumberPlateText(closeVeh)
+            local hash = GetEntityModel(closeVeh)
+            modelName = GetLabelText(GetDisplayNameFromVehicleModel(hash))
+            if modelName == "NULL" then
+                modelName = GetDisplayNameFromVehicleModel(hash)
+            end
         end
     end
 
@@ -26,7 +37,8 @@ local function OpenTablet()
             SetNuiFocus(true, true)
             SendNUIMessage({
                 action = "openTablet",
-                vehicleData = data
+                vehicleData = data,
+                vehicleModel = modelName
             })
         end, plate)
     else
@@ -34,7 +46,8 @@ local function OpenTablet()
         SetNuiFocus(true, true)
         SendNUIMessage({
             action = "openTablet",
-            vehicleData = nil
+            vehicleData = nil,
+            vehicleModel = "No Vehicle"
         })
     end
 end
@@ -74,6 +87,30 @@ RegisterNUICallback('closeTablet', function(_, cb)
     tabletOpen = false
     SetNuiFocus(false, false)
     SendNUIMessage({ action = "closeTablet" })
+    cb('ok')
+end)
+
+RegisterNUICallback('connectOBD', function(_, cb)
+    SetNuiFocus(false, false)
+    local ped = PlayerPedId()
+
+    TaskStartScenarioInPlace(ped, 'WORLD_HUMAN_STAND_MOBILE', 0, true)
+
+    if lib.progressBar({
+        duration = 2500,
+        label = 'Connecting OBD-II Diagnostic Tool...',
+        useReplay = false,
+        canCancel = true
+    }) then
+        ClearPedTasks(ped)
+        SetNuiFocus(true, true)
+        SendNUIMessage({ action = "obdConnected" })
+        lib.notify({ title = 'OBD Diagnostic', description = 'Connected to vehicle ECU via OBD-II port!', type = 'success' })
+    else
+        ClearPedTasks(ped)
+        SetNuiFocus(true, true)
+        lib.notify({ title = 'OBD Diagnostic', description = 'Connection cancelled.', type = 'error' })
+    end
     cb('ok')
 end)
 

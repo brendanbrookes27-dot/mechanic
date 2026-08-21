@@ -66,10 +66,11 @@
                     </div>
                     <div class="app-content">
                         <div class="vehicle-info-card">
-                            <h3>Vehicle Plate: <span id="diag-plate">N/A</span></h3>
-                            <p>Odometer: <span id="diag-mileage">0.0</span> mi</p>
+                            <h3>Vehicle: <span id="diag-model">Unknown</span> (<span id="diag-plate">N/A</span>)</h3>
+                            <p>Odometer: <span id="diag-mileage">0.0</span> mi | Status: <span id="connection-status" style="color: #ef4444; font-weight: bold;">Disconnected</span></p>
+                            <button id="connect-obd-btn" class="ios-btn" style="margin-top: 10px; width: auto;"><i class="fa-solid fa-plug"></i> Connect OBD Diagnostic Tool</button>
                         </div>
-                        <div class="parts-health-grid">
+                        <div id="parts-health-container" class="parts-health-grid hidden">
                             <div class="part-item">
                                 <span>Engine Oil</span>
                                 <div class="progress-bar"><div id="bar-oil" class="fill" style="width: 100%;"></div></div>

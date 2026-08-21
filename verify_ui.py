@@ -6,7 +6,7 @@ def run_verification(page):
     page.goto(f"file://{abs_path}")
     page.wait_for_timeout(500)
 
-    # Trigger Odometer HUD and Tablet UI via window postMessage
+    # Trigger Odometer HUD and Tablet UI with vehicleModel and obdConnected
     page.evaluate("""
         window.postMessage({
             action: 'updateOdometer',
@@ -26,12 +26,16 @@ def run_verification(page):
                 brakes: 70,
                 tires: 80,
                 fuel_filter: 90
-            }
+            },
+            vehicleModel: 'Elegy RH8'
+        }, '*');
+        window.postMessage({
+            action: 'obdConnected'
         }, '*');
     """)
 
     page.wait_for_timeout(1000)
-    page.screenshot(path="/home/jules/verification/screenshots/tablet_preview.png")
+    page.screenshot(path="/home/jules/verification/screenshots/tablet_preview_connected.png")
 
 if __name__ == "__main__":
     with sync_playwright() as p:

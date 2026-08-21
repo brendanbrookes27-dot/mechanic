@@ -4,6 +4,11 @@ local currentPlate = nil
 local currentVehicleData = nil
 local lastPos = nil
 
+local function TrimPlate(plate)
+    if not plate then return "" end
+    return string.upper(string.gsub(plate, "^%s*(.-)%s*$", "%1"))
+end
+
 -- Function to send NUI messages to HUD
 local function UpdateOdometerHUD(visible, mileage, unit)
     SendNUIMessage({
@@ -15,7 +20,7 @@ local function UpdateOdometerHUD(visible, mileage, unit)
 end
 
 RegisterNetEvent('qbx_mechanic:client:syncVehicleData', function(plate, data)
-    if currentPlate and currentPlate == plate then
+    if currentPlate and TrimPlate(currentPlate) == TrimPlate(plate) then
         currentVehicleData = data
     end
 end)
@@ -31,7 +36,7 @@ CreateThread(function()
             if not inVehicle or currentVehicle ~= veh then
                 inVehicle = true
                 currentVehicle = veh
-                currentPlate = GetVehicleNumberPlateText(veh)
+                currentPlate = TrimPlate(GetVehicleNumberPlateText(veh))
                 lastPos = GetEntityCoords(veh)
 
                 -- Fetch vehicle data from server
@@ -47,12 +52,12 @@ CreateThread(function()
                 local currentPos = GetEntityCoords(veh)
                 local distMeters = #(currentPos - lastPos)
 
-                -- Only calculate distance if vehicle is actually moving and not teleporting
+                -- Distance calculation
                 if distMeters > 0.5 and distMeters < 100.0 then
                     local addedDist = distMeters * Config.MilesPerUnit
-                    currentVehicleData.mileage = currentVehicleData.mileage + addedDist
+                    currentVehicleData.mileage = (currentVehicleData.mileage or 0.0) + addedDist
 
-                    -- Apply degradation to parts based on distance driven
+                    -- Apply wear per distance driven
                     for part, rate in pairs(Config.WearRates) do
                         if currentVehicleData[part] then
                             currentVehicleData[part] = math.max(0.0, currentVehicleData[part] - (addedDist * rate))

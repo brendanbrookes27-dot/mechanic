@@ -17,5 +17,6 @@ RegisterNetEvent('qbx_mechanic:server:setFuelCut', function(plate, status)
     if data then
         data.fuel_cut = status and 1 or 0
         exports.qbx_mechanic:SaveVehicleMechanicData(plate, data)
+        TriggerClientEvent('qbx_mechanic:client:syncVehicleData', -1, plate, data)
     end
 end)

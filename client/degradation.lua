@@ -9,7 +9,34 @@ local function LoadPtfxAsset(asset)
     end
 end
 
--- Thread to monitor part degradation status on current vehicle
+-- Fast loop to enforce fuel cut / engine stall
+CreateThread(function()
+    while true do
+        local ped = PlayerPedId()
+        if IsPedInAnyVehicle(ped, false) then
+            local veh = GetVehiclePedIsIn(ped, false)
+            local isDriver = (GetPedInVehicleSeat(veh, -1) == ped)
+
+            if isDriver then
+                local data = exports.qbx_mechanic:GetCurrentVehicleData()
+                if data and (data.fuel_cut == 1 or data.fuel_cut == true) then
+                    SetVehicleFuelLevel(veh, 0.0)
+                    SetVehicleEngineOn(veh, false, true, true)
+                    SetVehicleUndriveable(veh, true)
+                    Wait(100)
+                else
+                    Wait(1000)
+                end
+            else
+                Wait(1000)
+            end
+        else
+            Wait(2000)
+        end
+    end
+end)
+
+-- Monitoring loop for degradation, oil leaks, and handling modifiers
 CreateThread(function()
     local ptfxAsset = "core"
     LoadPtfxAsset(ptfxAsset)
@@ -31,14 +58,7 @@ CreateThread(function()
 
                 local data = exports.qbx_mechanic:GetCurrentVehicleData()
                 if data then
-                    -- 1. Check Fuel Cut Status
-                    if data.fuel_cut == 1 or data.fuel_cut == true then
-                        SetVehicleFuelLevel(veh, 0.0)
-                        SetVehicleEngineOn(veh, false, true, true)
-                        SetVehicleUndriveable(veh, true)
-                    end
-
-                    -- 2. Check Low Oil -> Smoke & Oil Leak PTFX attached to vehicle
+                    -- Check Low Oil -> Smoke & Oil Leak PTFX attached to vehicle
                     if data.oil <= Config.WearThresholds.oil_leak then
                         UseParticleFxAssetNextCall(ptfxAsset)
                         local oilEffect = StartParticleFxLoopedOnEntity("ent_ray_pro1_oil_drip", veh, 0.0, 1.2, -0.5, 0.0, 0.0, 0.0, 0.8, false, false, false)
@@ -54,7 +74,7 @@ CreateThread(function()
                         end
                     end
 
-                    -- 3. Check Spark Plugs / Fuel Filter -> Engine misfires
+                    -- Check Spark Plugs / Fuel Filter -> Engine misfires
                     if data.spark_plugs <= Config.WearThresholds.spark_misfire or data.fuel_filter <= 20.0 then
                         if math.random(1, 100) <= 15 then
                             SetVehicleEngineOn(veh, false, true, true)
@@ -63,14 +83,14 @@ CreateThread(function()
                         end
                     end
 
-                    -- 4. Check Brakes & Restore when repaired
+                    -- Check Brakes & Restore when repaired
                     if data.brakes <= Config.WearThresholds.brake_failure then
                         SetVehicleHandlingFloat(veh, 'CHandlingData', 'fBrakeForce', 0.2)
                     elseif defaultHandling[veh] then
                         SetVehicleHandlingFloat(veh, 'CHandlingData', 'fBrakeForce', defaultHandling[veh].brakeForce)
                     end
 
-                    -- 5. Check Tires & Restore when repaired
+                    -- Check Tires & Restore when repaired
                     if data.tires <= Config.WearThresholds.tire_slip then
                         SetVehicleHandlingFloat(veh, 'CHandlingData', 'fTractionCurveMin', 1.0)
                     elseif defaultHandling[veh] then
