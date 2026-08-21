@@ -18,38 +18,38 @@ body {
     display: none !important;
 }
 
-/* Odometer HUD Styling */
+/* Odometer HUD Styling - Clean & Minimalist Overlay */
 .odometer-container {
     position: absolute;
     bottom: 30px;
     right: 30px;
-    background: rgba(15, 23, 42, 0.75);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    padding: 12px 20px;
-    border-radius: 20px;
+    background: transparent;
+    border: none;
+    padding: 8px 12px;
     color: #ffffff;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    gap: 10px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 12px rgba(56, 189, 248, 0.6);
 }
 
 .odometer-icon {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     color: #38bdf8;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
 }
 
 .odometer-value {
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: 0.8px;
 }
 
 .odometer-value .unit {
-    font-size: 0.8rem;
-    color: #94a3b8;
+    font-size: 0.85rem;
+    color: #38bdf8;
     margin-left: 4px;
+    font-weight: 700;
 }
 
 /* iOS Tablet Wrapper */
@@ -59,12 +59,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
 }
 
 .ipad-frame {
-    width: 900px;
-    height: 620px;
+    width: 920px;
+    height: 640px;
     background: #0f172a;
     border-radius: 40px;
     border: 12px solid #1e293b;
@@ -158,6 +159,7 @@ body {
     flex-direction: column;
     padding: 20px;
     color: #f8fafc;
+    overflow-y: auto;
 }
 
 .app-header {
@@ -177,6 +179,11 @@ body {
     border-radius: 12px;
     cursor: pointer;
     font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 /* Content & Cards */
@@ -200,10 +207,12 @@ body {
     background: rgba(255, 255, 255, 0.04);
     padding: 10px 16px;
     border-radius: 12px;
+    gap: 15px;
 }
 
 .progress-bar {
-    width: 200px;
+    flex: 1;
+    max-width: 250px;
     height: 10px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 5px;
@@ -216,14 +225,37 @@ body {
     transition: width 0.3s ease;
 }
 
+.tuning-menu, .parts-shop {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+}
+
+.tune-item, .shop-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 .repair-btn, .buy-mod-btn, .buy-part-item {
     background: #3b82f6;
     border: none;
     color: white;
-    padding: 6px 14px;
+    padding: 8px 16px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.repair-btn:hover, .buy-mod-btn:hover, .buy-part-item:hover {
+    background: #2563eb;
 }
 
 .form-container {
@@ -252,6 +284,11 @@ body {
     font-weight: 600;
     border-radius: 12px;
     cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.ios-btn:hover {
+    background: #059669;
 }
 
 /* Home Bar */

@@ -8,21 +8,21 @@ Config.MechanicJobs = {
 }
 
 -- Unit: 'mi' or 'km'
-Config.DistanceUnit = 'mi'
-Config.MilesPerUnit = 0.000621371 -- Meters to Miles conversion factor
+Config.DistanceUnit = 'km'
+Config.MilesPerUnit = 0.001 -- Meters to Kilometers conversion factor (1m = 0.001km)
 
 -- Save interval for mileage (in seconds)
 Config.SaveInterval = 30
 
--- Part wear rates (per mile driven)
+-- Part wear rates (per kilometer driven)
 Config.WearRates = {
-    oil = 0.05,          -- Oil degrades ~5% per 100 miles
-    spark_plugs = 0.02,  -- Spark plugs degrade ~2% per 100 miles
-    clutch = 0.03,       -- Clutch degrades ~3% per 100 miles
-    suspension = 0.025,  -- Suspension degrades ~2.5% per 100 miles
-    brakes = 0.04,       -- Brakes degrade ~4% per 100 miles
-    tires = 0.045,       -- Tires degrade ~4.5% per 100 miles
-    fuel_filter = 0.02   -- Fuel filter degrades ~2% per 100 miles
+    oil = 0.03,          -- Oil degrades per 100 km
+    spark_plugs = 0.012,  -- Spark plugs degrade per 100 km
+    clutch = 0.018,       -- Clutch degrades per 100 km
+    suspension = 0.015,  -- Suspension degrades per 100 km
+    brakes = 0.025,       -- Brakes degrade per 100 km
+    tires = 0.028,       -- Tires degrade per 100 km
+    fuel_filter = 0.012   -- Fuel filter degrades per 100 km
 }
 
 -- Thresholds for performance impact (0 - 100%)

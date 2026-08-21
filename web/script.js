@@ -21,6 +21,12 @@ window.addEventListener('message', function(event) {
         }
     }
 
+    if (data.action === "updateVehicleData") {
+        if (data.vehicleData) {
+            populateDiagnostics(data.vehicleData);
+        }
+    }
+
     if (data.action === "closeTablet") {
         document.getElementById('tablet-container').classList.add('hidden');
         resetConnectionState();
@@ -71,19 +77,21 @@ document.getElementById('close-tablet-btn').addEventListener('click', function()
 
 // Populate Diagnostics Data
 function populateDiagnostics(data, vehicleModel) {
-    document.getElementById('diag-plate').innerText = data.plate || 'N/A';
-    document.getElementById('diag-model').innerText = vehicleModel || 'Vehicle';
-    document.getElementById('diag-mileage').innerText = (data.mileage || 0.0).toFixed(1);
+    if (data.plate) document.getElementById('diag-plate').innerText = data.plate;
+    if (vehicleModel) document.getElementById('diag-model').innerText = vehicleModel;
+    if (data.mileage !== undefined) document.getElementById('diag-mileage').innerText = (data.mileage || 0.0).toFixed(1);
 
     const parts = ['oil', 'spark_plugs', 'clutch', 'suspension', 'brakes', 'tires', 'fuel_filter'];
     parts.forEach(part => {
-        const val = Math.floor(data[part] || 100);
-        const bar = document.getElementById(`bar-${part}`);
-        const label = document.getElementById(`val-${part}`);
-        if (bar && label) {
-            bar.style.width = `${val}%`;
-            label.innerText = `${val}%`;
-            bar.style.background = val < 25 ? '#ef4444' : (val < 50 ? '#f59e0b' : '#10b981');
+        if (data[part] !== undefined) {
+            const val = Math.floor(data[part]);
+            const bar = document.getElementById(`bar-${part}`);
+            const label = document.getElementById(`val-${part}`);
+            if (bar && label) {
+                bar.style.width = `${val}%`;
+                label.innerText = `${val}%`;
+                bar.style.background = val < 25 ? '#ef4444' : (val < 50 ? '#f59e0b' : '#10b981');
+            }
         }
     });
 }

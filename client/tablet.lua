@@ -1,6 +1,7 @@
 -- Tablet client side logic and NUI callbacks
 
 local tabletOpen = false
+local currentPlate = nil
 
 local function OpenTablet()
     if tabletOpen then return end
@@ -30,6 +31,8 @@ local function OpenTablet()
             end
         end
     end
+
+    currentPlate = plate
 
     if plate then
         lib.callback('qbx_mechanic:server:getVehicleData', false, function(data)
@@ -68,6 +71,16 @@ exports('useTablet', function()
     OpenTablet()
 end)
 
+-- Receive sync update from server
+RegisterNetEvent('qbx_mechanic:client:syncVehicleData', function(syncedPlate, data)
+    if tabletOpen and currentPlate and string.gsub(syncedPlate, "^%s*(.-)%s*$", "%1") == string.gsub(currentPlate, "^%s*(.-)%s*$", "%1") then
+        SendNUIMessage({
+            action = "updateVehicleData",
+            vehicleData = data
+        })
+    end
+end)
+
 -- Receive Invoice Prompt
 RegisterNetEvent('qbx_mechanic:client:receiveInvoicePrompt', function(senderId, amount, reason)
     local alert = lib.alertDialog({
@@ -85,6 +98,7 @@ end)
 -- NUI Callbacks
 RegisterNUICallback('closeTablet', function(_, cb)
     tabletOpen = false
+    currentPlate = nil
     SetNuiFocus(false, false)
     SendNUIMessage({ action = "closeTablet" })
     cb('ok')
