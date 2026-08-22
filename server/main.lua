@@ -46,17 +46,41 @@ local function GetVehicleMechanicData(plate)
 
     local result = MySQL.single.await("SELECT * FROM vehicle_mechanic_data WHERE plate = ?", { plate })
     if not result then
-        -- Default stats if new vehicle
+        local initialMileage = 0.0
+        local oil = 100.0
+        local spark_plugs = 100.0
+        local clutch = 100.0
+        local suspension = 100.0
+        local brakes = 100.0
+        local tires = 100.0
+        local fuel_filter = 100.0
+
+        if Config.RandomAIMileage and Config.RandomAIMileage.enabled then
+            local minMileage = Config.RandomAIMileage.min or 1000.0
+            local maxMileage = Config.RandomAIMileage.max or 50000.0
+            -- Random mileage generator
+            initialMileage = math.floor((minMileage + (math.random() * (maxMileage - minMileage))) * 10.0) / 10.0
+
+            -- Calculate proportional initial component health based on random mileage
+            oil = math.clamp(100.0 - (initialMileage * (Config.WearRates.oil or 0.03) * 0.15), 40.0, 100.0)
+            spark_plugs = math.clamp(100.0 - (initialMileage * (Config.WearRates.spark_plugs or 0.012) * 0.15), 50.0, 100.0)
+            clutch = math.clamp(100.0 - (initialMileage * (Config.WearRates.clutch or 0.018) * 0.15), 50.0, 100.0)
+            suspension = math.clamp(100.0 - (initialMileage * (Config.WearRates.suspension or 0.015) * 0.15), 50.0, 100.0)
+            brakes = math.clamp(100.0 - (initialMileage * (Config.WearRates.brakes or 0.025) * 0.15), 45.0, 100.0)
+            tires = math.clamp(100.0 - (initialMileage * (Config.WearRates.tires or 0.028) * 0.15), 45.0, 100.0)
+            fuel_filter = math.clamp(100.0 - (initialMileage * (Config.WearRates.fuel_filter or 0.012) * 0.15), 50.0, 100.0)
+        end
+
         result = {
             plate = plate,
-            mileage = 0.0,
-            oil = 100.0,
-            spark_plugs = 100.0,
-            clutch = 100.0,
-            suspension = 100.0,
-            brakes = 100.0,
-            tires = 100.0,
-            fuel_filter = 100.0,
+            mileage = initialMileage,
+            oil = math.floor(oil * 10.0) / 10.0,
+            spark_plugs = math.floor(spark_plugs * 10.0) / 10.0,
+            clutch = math.floor(clutch * 10.0) / 10.0,
+            suspension = math.floor(suspension * 10.0) / 10.0,
+            brakes = math.floor(brakes * 10.0) / 10.0,
+            tires = math.floor(tires * 10.0) / 10.0,
+            fuel_filter = math.floor(fuel_filter * 10.0) / 10.0,
             fuel_cut = 0
         }
         MySQL.insert("INSERT INTO vehicle_mechanic_data (plate, mileage, oil, spark_plugs, clutch, suspension, brakes, tires, fuel_filter, fuel_cut) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", {

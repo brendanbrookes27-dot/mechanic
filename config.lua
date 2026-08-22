@@ -9,6 +9,13 @@ Config.MechanicJobs = {
 
 -- Unit: 'mi' or 'km'
 Config.DistanceUnit = 'km'
+
+-- AI / Random Vehicle Mileage Settings
+Config.RandomAIMileage = {
+    enabled = true,
+    min = 1200.0,   -- Minimum random initial mileage in km
+    max = 85000.0   -- Maximum random initial mileage in km
+}
 Config.MilesPerUnit = 0.001 -- Meters to Kilometers conversion factor (1m = 0.001km)
 
 -- Save interval for mileage (in seconds)
