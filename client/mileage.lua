@@ -27,11 +27,12 @@ end)
 
 -- Thread to track vehicle distance
 CreateThread(function()
+    local isDriver = false
     while true do
         local ped = PlayerPedId()
         if IsPedInAnyVehicle(ped, false) then
             local veh = GetVehiclePedIsIn(ped, false)
-            local isDriver = (GetPedInVehicleSeat(veh, -1) == ped)
+            isDriver = (GetPedInVehicleSeat(veh, -1) == ped)
 
             if not inVehicle or currentVehicle ~= veh then
                 inVehicle = true
@@ -72,7 +73,7 @@ CreateThread(function()
             Wait(1000)
         else
             if inVehicle then
-                if currentPlate and currentVehicleData then
+                if isDriver and currentPlate and currentVehicleData then
                     TriggerServerEvent('qbx_mechanic:server:saveVehicleData', currentPlate, currentVehicleData)
                 end
                 inVehicle = false

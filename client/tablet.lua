@@ -2,6 +2,38 @@
 
 local tabletOpen = false
 local currentPlate = nil
+local tabletProp = nil
+
+local function AttachTabletProp()
+    local ped = PlayerPedId()
+    local model = `prop_cs_tablet`
+    RequestModel(model)
+    while not HasModelLoaded(model) do
+        Wait(10)
+    end
+
+    if tabletProp and DoesEntityExist(tabletProp) then
+        DeleteEntity(tabletProp)
+    end
+
+    tabletProp = CreateObject(model, 0.0, 0.0, 0.0, true, true, false)
+    AttachEntityToEntity(tabletProp, ped, GetPedBoneIndex(ped, 28422), 0.0, 0.0, 0.03, 0.0, 0.0, 0.0, true, true, false, true, 1, true)
+
+    RequestAnimDict("amb@world_human_seat_wall_tablet@female@base")
+    while not HasAnimDictLoaded("amb@world_human_seat_wall_tablet@female@base") do
+        Wait(10)
+    end
+    TaskPlayAnim(ped, "amb@world_human_seat_wall_tablet@female@base", "base", 8.0, -8.0, -1, 49, 0, false, false, false)
+end
+
+local function DetachTabletProp()
+    local ped = PlayerPedId()
+    StopAnimTask(ped, "amb@world_human_seat_wall_tablet@female@base", "base", 1.0)
+    if tabletProp and DoesEntityExist(tabletProp) then
+        DeleteEntity(tabletProp)
+        tabletProp = nil
+    end
+end
 
 local function OpenTablet()
     if tabletOpen then return end
@@ -37,6 +69,7 @@ local function OpenTablet()
     if plate then
         lib.callback('qbx_mechanic:server:getVehicleData', false, function(data)
             tabletOpen = true
+            AttachTabletProp()
             SetNuiFocus(true, true)
             SendNUIMessage({
                 action = "openTablet",
@@ -46,6 +79,7 @@ local function OpenTablet()
         end, plate)
     else
         tabletOpen = true
+        AttachTabletProp()
         SetNuiFocus(true, true)
         SendNUIMessage({
             action = "openTablet",
@@ -99,9 +133,16 @@ end)
 RegisterNUICallback('closeTablet', function(_, cb)
     tabletOpen = false
     currentPlate = nil
+    DetachTabletProp()
     SetNuiFocus(false, false)
     SendNUIMessage({ action = "closeTablet" })
     cb('ok')
+end)
+
+AddEventHandler('onResourceStop', function(resourceName)
+    if GetCurrentResourceName() == resourceName then
+        DetachTabletProp()
+    end
 end)
 
 RegisterNUICallback('connectOBD', function(_, cb)

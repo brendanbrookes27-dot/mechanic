@@ -36,7 +36,8 @@ local function ApplyVehicleMod(veh, modCategory, modIndex)
     elseif modCategory == 'suspension' then
         SetVehicleMod(veh, 15, tonumber(modIndex), false)
     elseif modCategory == 'turbo' then
-        ToggleVehicleMod(veh, 18, true)
+        local enableTurbo = (modIndex == true or modIndex == 'true' or modIndex == 1 or modIndex == '1')
+        ToggleVehicleMod(veh, 18, enableTurbo)
     end
 end
 

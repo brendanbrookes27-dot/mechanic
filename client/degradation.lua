@@ -63,7 +63,10 @@ CreateThread(function()
                         UseParticleFxAssetNextCall(ptfxAsset)
                         local oilEffect = StartParticleFxLoopedOnEntity("ent_ray_pro1_oil_drip", veh, 0.0, 1.2, -0.5, 0.0, 0.0, 0.0, 0.8, false, false, false)
                         Wait(500)
-                        StopParticleFxLooped(oilEffect, false)
+                        if DoesParticleFxLoopedExist(oilEffect) then
+                            StopParticleFxLooped(oilEffect, false)
+                            RemoveParticleFx(oilEffect, false)
+                        end
 
                         -- Engine damage if severely empty
                         if data.oil <= Config.WearThresholds.oil_engine_damage then
